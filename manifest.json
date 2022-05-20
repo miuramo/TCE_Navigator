@@ -1,0 +1,36 @@
+{
+    "manifest_version": 3,
+    "name": "TCE_Navigator",
+    "version": "1.3",
+    "description": "Extension for TCE Moodle Course Navigation",
+    "host_permissions": [
+	"https://ipsjtce.org/"
+    ],
+    "content_scripts": [
+	{
+	    "matches": ["https://ipsjtce.org/*"],
+	    "js": ["third-party/jquery-3.6.0.min.js", "content_script.js"],
+	    "css": ["war.css"]
+	}
+    ],
+    "web_accessible_resources": [
+	{
+	    "matches": ["https://*/*"],
+	    "resources": ["war.js"]
+	}
+    ], 
+    "permissions": [
+	"tabs",
+	"storage"
+    ],
+    "action":{
+	"default_title": "TCE_Navigator",
+	"default_icon": "icons/i16.png",
+	"default_popup":"popup.html"
+    },
+    "icons": {
+	"16": "icons/i16.png",
+	"48": "icons/i48.png",
+	"128": "icons/i128.png"
+    }
+}
