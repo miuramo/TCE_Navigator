@@ -26,7 +26,8 @@ function getStarHtml(course){
     if ( starHash[c4] ){ // スターがついている
 	return "<span id=\"star"+c4+"\" class=\"cstar\" title=\"click to unstar\" style=\"color:"+starHash[c4]+"\">★</span>";
     } else {
-	return "<span id=\"unstar"+c4+"\" class=\"cunstar\" title=\"click to star\" >☆</span>";
+	var stars = "<span id=\"unstar"+c4+"\" class=\"cunstar\" title=\"click to star\" >☆</span>";
+	return stars;
     }
 }
 // c4: コース名末尾4桁
@@ -190,7 +191,7 @@ function updateList(){
 		txt += "<a href=\""+val+"\">"+key+"</a> &nbsp; ";
 	    });
 	    if (txt.length > 10){
-		$('#c'+course).append("<li>文例："+txt+"</li>");
+		// $('#c'+course).append("<li>文例："+txt+"</li>");
 	    }
 	});
     }
@@ -236,6 +237,8 @@ function cacheclear(){
 
 
 function inputclear(){
+//    var val = $('#search').val();
+//    if (courseHash[val]===undefined) addStar(val,null);
     $('#search').val("");
     kwd = "";
     updateList();
@@ -252,50 +255,15 @@ function divein(e){
 
 function starclk(e){
     var sn = e.currentTarget.id;
-    addStar(sn.slice(-4), "gold"); //add star
+    var hosicolor = $('#colorofstar').val();
+    addStar(sn.slice(-4), hosicolor ); //add star
     updateList();
 }
 function unstarclk(e){
     var sn = e.currentTarget.id;
+    console.log(sn);
     addStar(sn.slice(-4), null); //delete star
     updateList();
 }
 
 
-/*	var mtch = data.matchAll(/<pre>([^<]+)<\/pre>/gm);
-	for(const mt of mtch){
-	    console.log(mt[1]);
-	    console.log(mt[1].length);
-	    }*/
-/*	var mtch = data.match(/<pre[^>]*>([^<]+)<\/pre>/g);
-	for(const mt of mtch){
-	    console.log(mt);
-	}*/
-
-/*	var spary = data.split("\n");
-	for(const s of spary){
-	    console.log(s);
-	    }*/
-//	var nobr = data.replace(/(\r\n|\n|\r)/gmu, "\r");
-//	console.log(nobr);
-	//	var mtch = nobr.match(/<pre[^>]*>([^<]+)<\/pre>/gm);
-//	var parsed = $(data);
-//	console.log(parsed);
-	
-/*	var mtch = data.match(/<pre>([^<]+)<\/pre>/gmu);
-	for(const mt of mtch){
-	    console.log(mt.length+" "+mt);
-	}*/
-	
-	// get <pre>tag
-/*	var nodeNames = [];
-	$.each( tree, function(i,el){
-	    if (el.nodeName == 'DIV'){
-		nodeNames[i] = el;
-	    }
-	});*/
-//	console.log(nodeNames);
-//	for (i = 0; i < ary.length ; i++) {
-//	    var a = ary[i];
-//	    console.log(a);
-	//	}

@@ -1,22 +1,51 @@
+/* 文例コピーボタンエリア */
 .top_fixed {
     position: fixed;
     width: 80%;
     height: 70px;
     top: 0px;
     left: 100px;
-    padding: 0px 4px;
-    background: rgba(200,200,200,0.4);
+    padding: 0px 10px;
+    background: rgba(240,240,220,0.6);
     color: #333;
-    z-index: 9999;
+    z-index: 9998;
+    -webkit-transition: all .3s ease;    
+    transition: all .3s ease;
+    opacity: 0.0;
+}
+/* 文例コピーボタンエリアを隠す */
+.hide{
+    top: -75px;
 }
 
 .xsm {
     font-size: xx-small;
 }
 
+/* 文例表示エリア */
 .bunprev {
     font-size: xx-small;
     background: rgba(240,240,200,0.8);
     color: #333;
     padding: 4px 0px;
+    opacity: 0.0;
+    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
+    pointer-events: none; /* non-clickable */ 
+}
+
+/* Tooltip */
+.ctooltip {
+    position: fixed;
+    display: inline-block;
+    z-index:19999;
+    opacity: 1.0;
+    top: 100px;
+    left: 0px;
+    width: 74px;
+    height:27px;
+    padding: 0 5px;
+    background: #9ff;
+    color: #000;
+    border: 2px solid #0ff;
 }

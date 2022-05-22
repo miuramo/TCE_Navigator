@@ -12,6 +12,7 @@ var lastanchor = null;
 var bunreiHash = {};
 var lastbunrei = null;
 
+// 必要に応じて、war.js を読み込むための関数
 const injectScript = (filePath, tag) => {
     var node = document.getElementsByTagName(tag)[0];
     var script = document.createElement('script');
@@ -19,6 +20,7 @@ const injectScript = (filePath, tag) => {
     script.setAttribute('src', filePath);
     node.appendChild(script);
 }
+
 
 
 $(document).ready(function(){
@@ -95,7 +97,7 @@ $(document).ready(function(){
 	});
 
 
-	// 連絡用フォーラムを開いている時は、コピペ用の文例を裏でロードする
+	// 連絡用フォーラムの一覧ページを開いている時は、コピペ用の文例を裏でロードする
 	
 	var title = $('title')[0].innerText;
 	if (title.match(/連絡用フォーラム/)){
@@ -103,9 +105,21 @@ $(document).ready(function(){
 	    type = type.replace("第1","");
 	    type = type.replace("第2","");
 	    findBunrei(type, bunreiHash );
-	}
+	} else {
 
-	// location.href = /mod/forum/view.php?id=XXXX なら、フォーラム
+//    /mod/forum/discuss.php フォーラムの詳細を開いているときも、コピペ用の文例を裏でロードする
+	    var h2 = $('h2');
+//	    console.log($(h2));
+	    var h2t = h2[0].innerText;
+//	    console.log(h2t);
+	    if (h2t.match(/連絡用フォーラム/)){
+		h2t = h2t.replace("連絡用フォーラム","");
+		h2t = h2t.replace("第1","");
+		h2t = h2t.replace("第2","");
+		findBunrei(h2t, bunreiHash );
+	    }
+	}
+	
 	
     });
 });
@@ -119,18 +133,18 @@ function findBunrei(type, bunHash){
     var h1 = $('h1')[0];
     // console.log("H1 "+h1.innerText);
     var courseId = courseHash[h1.innerText].replace("https://ipsjtce.org/course/view.php?id=","");
-    // console.log("CourseID: "+courseId);
+    //    console.log("CourseID: "+courseId+"  Type: "+type);
     
     var cbkey = 'bunrei'+courseId;
     // console.log('文例集のキー: '+cbkey);
     chrome.storage.sync.get( cbkey, function(res){
 	var tmpbHash = res[cbkey];
 	$.each(tmpbHash, function(buntitle,bunurl){
-//	    console.log(buntitle+" "+bunurl);
+	    // console.log("Each: "+buntitle+" "+bunurl);
 	    //どの文例集か、現在開いているフォーラムのtype(メタ査読者、査読者、著者)をつかってマッチする
 	    var regex = new RegExp("^"+type);
 	    if (buntitle.match(regex)){
-		console.log(buntitle+" :"+bunurl);
+		// console.log("実際に読み込む："+buntitle+" :"+bunurl);
 		
 		loadBunrei(bunurl, type); //typeは本来不要だが、査読者文例の最初の2つを繋げたいため渡している
 
@@ -153,43 +167,35 @@ function loadBunrei(bunurl, type){
     $.get(bunurl, {}, function(data){
 	var pres = $(data).find('pre'); //現状ではpreタグのみを取り出している
 	var ttitle = "論文査読のお願い";
-//	var count = 0;
-//	var tmptxt = "";
 	$.each(pres,function(i,el){
 	    var txt = el.innerText;
-	    if (txt.match(/件名/) && txt.length < 100 || txt.match(/トピックタイトル/)  ){
+	    if ( ( txt.match(/件名/) || txt.match(/トピックタイトル/)) && txt.length < 100 ){
 		ttitle = txt;
 		ttitle = ttitle.replace("件名：","");
 		ttitle = ttitle.replace("トピックタイトル：","");
 	    } else {
-/*		if (type=="査読者" && count==0){
-		    tmptxt = txt;
-		    count++;
-		} else if (type=="査読者" && count==1){
-		    txt = tmptxt + txt;
-		} else {*/
 		var btitle = ttitle+"("+txt.length+")";
-		console.log("【"+btitle+"】"+"\n"+txt);
 		$('#btndiv').append("<button class='xsm cbutton'>"+btitle+"</button> ");
 		CopyBunHash[btitle] = txt;
 		
 		ttitle = "論文査読のお願い";
-//		count++;
-//		}
 	    }
 	});
 	$('#btndiv').append("<input id='addpretag' type='checkbox' checked='checked'><label for='addpretag' class='xsm'>Preタグ追加</label> ");
+	$('#btndiv').append("<a href='"+bunurl+"' target='_blank' class='xsm'>元の文例</a> ");
 	$('#btndiv').append("<br><pre id='bunprev' class='bunprev'></pre> ");
 	// hover
 	$('.cbutton').on('click', cclick);
 	$('.cbutton').on('mouseover', cover);
 	$('.cbutton').on('mouseleave', cleave);
+	$('.cbutton').on('mousemove', cmove);
+	$('#btndiv').css("opacity",1.0);
 
     });
     
 }
 
-function cclick(){
+function cclick(event){
     var bkey = $(this)[0].innerText;
     var doaddpretag = $('#addpretag').prop("checked");
     var txt = CopyBunHash[bkey];
@@ -197,14 +203,20 @@ function cclick(){
 	txt = '<pre dir="ltr" style="text-align: left; font-size: 14px;">'+txt+'</pre>';
     }
     copyTextToClipboard(txt);
-    $('#bunprev').text("");
+    $('#bunprev').css("background","rgba(10,240,240,0.8)");
+    $('#tooltip').fadeIn(300).delay(1000).fadeOut(2000);
+    cmove(event);
+    
 }
 function cover(){
     var bkey = $(this)[0].innerText;
     $('#bunprev').text( CopyBunHash[bkey] );
+    $('#bunprev').css("background","rgba(240,240,200,0.8)");
+    $('#bunprev').css("opacity",1.0);
 }
 function cleave(){
-    $('#bunprev').text("");
+    $('#bunprev').css("background","rgba(240,240,200,0.8)");
+    $('#bunprev').css("opacity",0.0);
 }
 
 function copyTextToClipboard(text) {
@@ -215,4 +227,10 @@ function copyTextToClipboard(text) {
   document.execCommand('copy');
   copyTA.blur();
   document.body.removeChild(copyTA);
+}
+
+function cmove(event){
+    var mx = event.pageX;
+    var my = (event.pageY + 20);
+    $('#tooltip').offset({"top": my, "left":mx});
 }
