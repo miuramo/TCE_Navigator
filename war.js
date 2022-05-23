@@ -1,8 +1,5 @@
+
 // inject to content
-
-// is Forum?
-
-// Inject progress bars
 
 var btndiv = document.createElement("header");
 btndiv.id = "btndiv"; btndiv.className = "top_fixed";
@@ -16,6 +13,8 @@ tooltip.innerHTML = "Copied!!";
 $('body').append(tooltip);
 $('#tooltip').fadeOut(1);
 
+
+// 文例ボタンエリアの表示・非表示
 jQuery(function($){
     var _window = $(window),
 	_header = $('#btndiv'),

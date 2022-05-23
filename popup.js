@@ -6,45 +6,6 @@ var starHash = {}; //スターをつける "00XX"=>"color of star"
 
 var kwd = ""; // サーチエリアのテキスト
 
-function logobj(obj){
-    $.each(obj, function(idx, val){
-	console.log(idx+" "+val);
-    });
-}
-
-// if type is null, delete
-function addStar(course, type){
-    if (type !== null) starHash[course] = type;
-    else   delete starHash[course];
-    chrome.storage.sync.set( {"starHash": starHash } );
-}
-
-// course: 長いコース名
-function getStarHtml(course){
-    var c4 = course.slice(-4);
-    // c4: コース名末尾4桁
-    if ( starHash[c4] ){ // スターがついている
-	return "<span id=\"star"+c4+"\" class=\"cstar\" title=\"click to unstar\" style=\"color:"+starHash[c4]+"\">★</span>";
-    } else {
-	var stars = "<span id=\"unstar"+c4+"\" class=\"cunstar\" title=\"click to star\" >☆</span>";
-	return stars;
-    }
-}
-
-function getHtml_PresetColorStar(color){
-    return "<span id=\"ccstar\" class=\"ccstar\" style=\"color:"+color+"\" >★</span>";
-}
-
-// c4: コース名末尾4桁
-function getDiveHtml(c4){
-    if ( starHash[c4] )
-	return "<button class='cdive cdstar' style='background: "+starHash[c4]+";'>"+c4+"</button> ";
-    else
-	return "<button class='cdive' >"+c4+"</button> ";
-}
-
-
-
 $(window).on('load', function(){
     chrome.storage.sync.get(['starHash'], function(res){
 	if (res.starHash === undefined){
@@ -232,6 +193,56 @@ $('body').on('keydown'),function(e){
     }
 }
 
+// for Debug
+function logobj(obj){
+    $.each(obj, function(idx, val){
+	console.log(idx+" "+val);
+    });
+}
+
+// 星をつける。cn4: コース名末尾4文字, type : 星の色
+// if type is null, delete
+function addStar(cn4, type){
+    if (type !== null) starHash[cn4] = type;
+    else   delete starHash[cn4];
+    chrome.storage.sync.set( {"starHash": starHash } );
+}
+
+// course: 長いコース名(TCE-22-XXXX)
+function getStarHtml(course){
+    var cn4 = course.slice(-4);
+    // cn4: コース名末尾4桁
+    if ( starHash[cn4] ){ // スターがついている
+	return "<span id=\"star"+cn4+"\" class=\"cstar\" title=\"click to unstar\" style=\"color:"+starHash[cn4]+"\">★</span>";
+    } else {
+	return "<span id=\"unstar"+cn4+"\" class=\"cunstar\" title=\"click to star\" >☆</span>";
+    }
+}
+
+// プリセットされた星の色設定ボタン
+function getHtml_PresetColorStar(color){
+    return "<span id=\"ccstar\" class=\"ccstar\" style=\"color:"+color+"\" >★</span>";
+}
+// デフォルトの色選択星をクリックしたとき、ColorChooserに設定
+function colorstarclk(e){
+    var scolor = e.currentTarget.style.color;
+    $('#colorofstar').val( rgbTo16(scolor) );
+}
+// rgb(nnn,nnn,nnn) => #rrggbb 形式に変換
+function rgbTo16(col){
+  return "#" + col.match(/\d+/g).map(function(a){return ("0" + parseInt(a).toString(16)).slice(-2)}).join("");
+}
+
+
+// cn4: コース名末尾4桁
+function getDiveHtml(cn4){
+    if ( starHash[cn4] )
+	return "<button class='cdive cdstar' style='background: "+starHash[cn4]+";'>"+cn4+"</button> ";
+    else
+	return "<button class='cdive' >"+cn4+"</button> ";
+}
+
+
 // キャッシュのクリア
 function cacheclear(){
     var ok = confirm("本当にキャッシュを削除してよいですか？");
@@ -280,13 +291,4 @@ function unstarclk(e){
     updateList();
 
 }
-// rgb(nnn,nnn,nnn) => #rrggbb 形式に変換
-function rgbTo16(col){
-  return "#" + col.match(/\d+/g).map(function(a){return ("0" + parseInt(a).toString(16)).slice(-2)}).join("");
-}
 
-// デフォルトの色選択星をクリックしたとき、ColorChooserに設定
-function colorstarclk(e){
-    var scolor = e.currentTarget.style.color;
-    $('#colorofstar').val( rgbTo16(scolor) );
-}

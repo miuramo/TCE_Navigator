@@ -28,19 +28,13 @@ $(document).ready(function(){
 
     chrome.storage.sync.get(['courseHash'], function(res){
 	var len = Object.keys(res.courseHash).length;
-	//    console.log("load len: "+len);
-	//    console.log(res.courseHash);
 
 	courseHash = res.courseHash;
 
-//	var len = Object.keys(courseHash).length;
-//	console.log("before load: "+len);
 
 	$.each(anchors, function(idx,val){
 	    if (val.innerText.match(/^TCE-[2-9I].+$/)){
 		courseHash[val.innerText] = val.href;
-//		console.log(val.innerText);
-//		console.log(val.href);    
 	    }
 	});
 	chrome.storage.sync.set( {"courseHash": courseHash} );
@@ -181,7 +175,7 @@ function loadBunrei(bunurl, type){
 		ttitle = "論文査読のお願い";
 	    }
 	});
-	$('#btndiv').append("<input id='addpretag' type='checkbox' checked='checked'><label for='addpretag' class='xsm'>Preタグ追加</label> ");
+	$('#btndiv').append("<input id='addpretag' type='checkbox' checked='checked'> <label for='addpretag' class='xsm'>Preタグ追加</label> ");
 	$('#btndiv').append("<a href='"+bunurl+"' target='_blank' class='xsm'>元の文例</a> ");
 	$('#btndiv').append("<br><pre id='bunprev' class='bunprev'></pre> ");
 	// hover
@@ -195,15 +189,19 @@ function loadBunrei(bunurl, type){
     
 }
 
+const pretag_custom_begin = '<pre dir="ltr" style="text-align: left; font-size: 14px;">';
+const pretag_custom_end = '</pre>';
+
 function cclick(event){
     var bkey = $(this)[0].innerText;
     var doaddpretag = $('#addpretag').prop("checked");
     var txt = CopyBunHash[bkey];
-    if (doaddpretag){
-	txt = '<pre dir="ltr" style="text-align: left; font-size: 14px;">'+txt+'</pre>';
+    if (doaddpretag){ // Preタグ追加チェックボックスがONのとき
+	txt = (pretag_custom_begin + txt + pretag_custom_end) ; //ここの前で定義したPreタグで囲む
     }
     copyTextToClipboard(txt);
-    $('#bunprev').css("background","rgba(10,240,240,0.8)");
+
+    $('#bunprev').css("background","rgba(10,240,240,0.8)").fadeOut(2500);
     $('#tooltip').fadeIn(300).delay(1000).fadeOut(2000);
     cmove(event);
     
@@ -212,7 +210,7 @@ function cover(){
     var bkey = $(this)[0].innerText;
     $('#bunprev').text( CopyBunHash[bkey] );
     $('#bunprev').css("background","rgba(240,240,200,0.8)");
-    $('#bunprev').css("opacity",1.0);
+    $('#bunprev').css("opacity",1.0).fadeIn();
 }
 function cleave(){
     $('#bunprev').css("background","rgba(240,240,200,0.8)");
@@ -230,7 +228,7 @@ function copyTextToClipboard(text) {
 }
 
 function cmove(event){
-    var mx = event.pageX;
-    var my = (event.pageY + 20);
+    var mx = event.pageX + 20;
+    var my = event.pageY + 5 ;
     $('#tooltip').offset({"top": my, "left":mx});
 }
