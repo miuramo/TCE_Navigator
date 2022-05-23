@@ -10,7 +10,7 @@ body {
     background-image: linear-gradient( 135deg, #d2ffe8 10%, #a6befb 100%);
 }
 
-.cstar {
+.cstar, .ccstar {
     font-size: large;
     -webkit-text-stroke: 1px orangered;
      text-stroke: 1px orangered;    

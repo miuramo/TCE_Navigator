@@ -30,6 +30,11 @@ function getStarHtml(course){
 	return stars;
     }
 }
+
+function getHtml_PresetColorStar(color){
+    return "<span id=\"ccstar\" class=\"ccstar\" style=\"color:"+color+"\" >★</span>";
+}
+
 // c4: コース名末尾4桁
 function getDiveHtml(c4){
     if ( starHash[c4] )
@@ -38,14 +43,13 @@ function getDiveHtml(c4){
 	return "<button class='cdive' >"+c4+"</button> ";
 }
 
+
+
 $(window).on('load', function(){
-    console.log("starHash");
     chrome.storage.sync.get(['starHash'], function(res){
 	if (res.starHash === undefined){
 	    chrome.storage.sync.set( {"starHash": {} } );
-	    console.log("starHash initialized");
 	} else {
-	    console.log("starHash contents");
 	    starHash = res.starHash;
 	    logobj(starHash);
 	}
@@ -72,8 +76,13 @@ $(window).on('load', function(){
 	    $('#isopentab').prop("checked", res.isopentab);
 	}
     });
-    
 
+    // プリセットされた星の色
+    const preset_stars = ['#ffd700','#f0e68c','#ffe4b5','#ffc0cb','#d8bfd8','#afeeee','#98fb98','#66cdaa','#00bfff'];
+    $.each(preset_stars, function(idx,val){
+	$('#presetstars').append( getHtml_PresetColorStar(val) );
+    });
+    
 
     document.querySelector('.inputclear').addEventListener('click', inputclear);
     document.querySelector('.cacheclear').addEventListener('click', cacheclear);
@@ -143,6 +152,8 @@ function updateList(){
     $('.cstar').on('click', unstarclk);
     $('.cunstar').on('click', starclk);
     
+    $('.ccstar').on('click', colorstarclk);
+
     if (count==1){ //唯一に絞り込めた
 	$('#clistul').append("<ul id=\"c"+course+"\"></ul>");
 	// コース編集URL view->edit
@@ -253,17 +264,29 @@ function divein(e){
     updateList();
 }
 
+// 星をクリックしてスターをつける
 function starclk(e){
     var sn = e.currentTarget.id;
     var hosicolor = $('#colorofstar').val();
     addStar(sn.slice(-4), hosicolor ); //add star
     updateList();
+
+    //
 }
+// 星をクリックしてスターを消す
 function unstarclk(e){
     var sn = e.currentTarget.id;
-    console.log(sn);
     addStar(sn.slice(-4), null); //delete star
     updateList();
+
+}
+// rgb(nnn,nnn,nnn) => #rrggbb 形式に変換
+function rgbTo16(col){
+  return "#" + col.match(/\d+/g).map(function(a){return ("0" + parseInt(a).toString(16)).slice(-2)}).join("");
 }
 
-
+// デフォルトの色選択星をクリックしたとき、ColorChooserに設定
+function colorstarclk(e){
+    var scolor = e.currentTarget.style.color;
+    $('#colorofstar').val( rgbTo16(scolor) );
+}

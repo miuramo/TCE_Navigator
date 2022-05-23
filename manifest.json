@@ -15,7 +15,7 @@
     ],
     "web_accessible_resources": [
 	{
-	    "matches": ["https://*/*"],
+	    "matches": ["https://ipsjtce.org/*"],
 	    "resources": ["war.js"]
 	}
     ], 
