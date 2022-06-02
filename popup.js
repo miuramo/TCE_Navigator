@@ -103,7 +103,8 @@ function updateList(){
     var href = "";
     $.each(courseHash, function(idx, val){
 	if (idx.toUpperCase().match(regex) || kwd.length == 0){
-	    $('#clistul').append("<li><a href=\""+val+"\">"+idx+"</a> "+ getDiveHtml(idx.slice(-4)) + " "+ getStarHtml(idx) +"</li>");
+	    // この段階では、display:none にしておく
+	    $('#clistul').append("<li><a href=\""+val+"\">"+idx+"</a> "+ getDiveHtml(idx.slice(-4)) + " "+ getStarHtml(idx) +"<ul id=\"c"+idx+"\" style=\"display:none;\"></ul> </li>");
 	    count++;
 	    course = idx;
 	    href = val;
@@ -115,55 +116,62 @@ function updateList(){
     
     $('.ccstar').on('click', colorstarclk);
 
-    if (count==1){ //唯一に絞り込めた
-	$('#clistul').append("<ul id=\"c"+course+"\"></ul>");
-	// コース編集URL view->edit
-	var editurl = href.replace("view","edit");
-	var userurl = href.replace("course/view","user/index");
-	$('#c'+course).append("<li><a href=\""+editurl+"\">コース編集</a> &nbsp; <a href=\""+userurl+"\">ユーザ編集</a></li>");
-	var sechash = {"#section-1":"投稿原稿",
-		       "#section-2":"著者連絡",
-		       "#section-3":"判定結果",
-		       "#section-4":"編集委員会",
-		       "#section-5":"幹事",
-		       "#section-6":"メタ査読者",
-		       "#section-7":"査読者"};
-	var sectxt = "";
-	var tmpcount = 0;
-	$.each(sechash, function(idx,val){
-	    sectxt += "<a href=\""+href+idx+"\">"+val+"</a> &nbsp; ";
-	    if (tmpcount==2) sectxt += "<br>";
-	    tmpcount++;
-	});
-	$('#c'+course).append("<li>"+sectxt+"</li>");
+    if (count < 5){ //4つ以下に絞り込めた
+	
+	$.each(courseHash, function(course, href){
+	    if (course.toUpperCase().match(regex) ){
+		// コース編集URL view->edit
+		var editurl = href.replace("view","edit");
+		var userurl = href.replace("course/view","user/index");
 
-	// さらに、フォーラムをチェック
-	var cfkey = 'forum'+href.replace("https://ipsjtce.org/course/view.php?id=","");
-	chrome.storage.sync.get( cfkey, function(res){
-	    var tmpfHash = res[cfkey];
-	    var txt = "";
-	    $.each(tmpfHash, function(key,val){
-		txt += "<a href=\""+val+"\">"+key+"</a> &nbsp; ";
-	    });
-	    if (txt.length > 10){
-		$('#c'+course).append("<li>フォーラム："+txt+"</li>");
-	    } else {
-		$('#c'+course).append("<li>いちど <a href=\""+href+"\">コースを表示</a> すると、ここにフォーラムへの直リンクを表示します</li>");
-	    }
-	});
+		$('#c'+course).css("display","inline-block");
 
-	// さらに、文例集をチェック
-	var cbkey = 'bunrei'+href.replace("https://ipsjtce.org/course/view.php?id=","");
-	chrome.storage.sync.get( cbkey, function(res){
-	    var tmpbHash = res[cbkey];
-	    var txt = "";
-	    $.each(tmpbHash, function(key,val){
-		key = key.replace("連絡用文例集","");
-		key = key.replace("ページ","");
-		txt += "<a href=\""+val+"\">"+key+"</a> &nbsp; ";
-	    });
-	    if (txt.length > 10){
-		// $('#c'+course).append("<li>文例："+txt+"</li>");
+		$('#c'+course).append("<li><a href=\""+editurl+"\">コース編集</a> &nbsp; <a href=\""+userurl+"\">ユーザ編集</a></li>");
+		var sechash = {"#section-1":"投稿原稿",
+			       "#section-2":"著者連絡",
+			       "#section-3":"判定結果",
+			       "#section-4":"編集委員会",
+			       "#section-5":"幹事",
+			       "#section-6":"メタ査読者",
+			       "#section-7":"査読者"};
+		var sectxt = "";
+		var tmpcount = 0;
+		$.each(sechash, function(idx,val){
+		    sectxt += "<a href=\""+href+idx+"\">"+val+"</a> &nbsp; ";
+		    if (tmpcount==2) sectxt += "<br>";
+		    tmpcount++;
+		});
+		$('#c'+course).append("<li>"+sectxt+"</li>");
+		
+		// さらに、フォーラムをチェック
+		var cfkey = 'forum'+href.replace("https://ipsjtce.org/course/view.php?id=","");
+		chrome.storage.sync.get( cfkey, function(res){
+		    var tmpfHash = res[cfkey];
+		    var txt = "";
+		    $.each(tmpfHash, function(key,val){
+			txt += "<a href=\""+val+"\">"+key+"</a> &nbsp; ";
+		    });
+		    if (txt.length > 10){
+			$('#c'+course).append("<li>フォーラム："+txt+"</li>");
+		    } else {
+			$('#c'+course).append("<li>いちど <a href=\""+href+"\">コースを表示</a> すると、ここにフォーラムへの直リンクを表示します</li>");
+		    }
+		});
+		
+		// さらに、文例集をチェック
+		var cbkey = 'bunrei'+href.replace("https://ipsjtce.org/course/view.php?id=","");
+		chrome.storage.sync.get( cbkey, function(res){
+		    var tmpbHash = res[cbkey];
+		    var txt = "";
+		    $.each(tmpbHash, function(key,val){
+			key = key.replace("連絡用文例集","");
+			key = key.replace("ページ","");
+			txt += "<a href=\""+val+"\">"+key+"</a> &nbsp; ";
+		    });
+		    if (txt.length > 10){
+			// $('#c'+course).append("<li>文例："+txt+"</li>");
+		    }
+		});
 	    }
 	});
     }
