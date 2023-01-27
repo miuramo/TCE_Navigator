@@ -255,15 +255,21 @@ function getDiveHtml(cn4) {
 
 // 検索中キャッシュのクリア
 function thesecacheclear() {
-	var ok = confirm("検索対象のキャッシュを削除してよいですか？");
-	if (ok == true) {
-		delete starHash[kwd];
-		chrome.storage.sync.set({ "starHash": starHash });
-		console.log("キャッシュを削除しました");
-		$('#search').val("");
-		kwd = "";
-		updateList();
-	}
+	// delete courseHash
+	var regex = new RegExp(kwd);
+	$.each(courseHash, function (course, href) {
+		if (course.toUpperCase().match(regex)) {
+			delete courseHash[course];
+		}
+	});
+	chrome.storage.sync.set( {"courseHash": courseHash} ); //削除したコースハッシュを保存
+
+	delete starHash[kwd];
+	chrome.storage.sync.set({ "starHash": starHash });
+	console.log("キャッシュを削除しました");
+	$('#search').val("");
+	kwd = "";
+	updateList();
 }
 
 // 全キャッシュのクリア
