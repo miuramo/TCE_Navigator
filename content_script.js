@@ -175,7 +175,7 @@ function loadBunrei(bunurl, type){
 		ttitle = "論文査読のお願い";
 	    }
 	});
-	$('#btndiv').append("<input id='addpretag' type='checkbox' checked='checked'> <label for='addpretag' class='xsm'>Preタグ追加</label> ");
+	$('#btndiv').append("<input id='addpretag' type='checkbox' > <label for='addpretag' class='xsm'>Preタグ追加</label> ");
 	$('#btndiv').append("<a href='"+bunurl+"' target='_blank' class='xsm'>元の文例</a> ");
 	$('#btndiv').append("<br><pre id='bunprev' class='bunprev'></pre> ");
 	// hover
