@@ -1,26 +1,36 @@
 <html>
+
 <head>
   <link rel="stylesheet" href="popup.css">
   <meta charset="utf-8">
   <script src="third-party/jquery-3.6.0.min.js"></script>
 </head>
+
 <body style="width: 275px; height: 240px">
   <div>
-<!--    <div id="cstardiv"><ul id="cstarul"></ul></div> -->
+    <!--    <div id="cstardiv"><ul id="cstarul"></ul></div> -->
     <div id="cstarul" style="line-height: 1.9;"></div>
-    Search Course: <input id="search" size="7"><button class="inputclear" title="clear search field" style="font-size:xx-small;">X</button>
-    &nbsp; <input id="isopentab" type="checkbox"> <label for="isopentab">new tab</label> </div>
-  <div id="clistdiv"><ul id="clistul"></ul></div>
+    Search Course: <input id="search" size="9"><button class="inputclear" title="clear search field"
+      style="font-size:xx-small;">X</button>
+    &nbsp; <input id="isopentab" type="checkbox"> <label for="isopentab">new tab</label>
+  </div>
+  <div id="clistdiv">
+    <ul id="clistul"></ul>
+  </div>
   <script src="popup.js"></script>
 
   星の色→ <input id="colorofstar" type="color" value="#ffd700">
-<span id="presetstars"></span>
+  <span id="presetstars"></span>
   <br>
   <a href="https://ipsjtce.org/local/edwiserform/view.php?page=viewdata&formid=1">新規投稿Excel</a> &nbsp;
   <a href="https://ipsjtce.org/admin/category.php?category=courses">コース追加</a>
+  <br>
+  <button class="thesecacheclear" style="font-size:xx-small;">検索結果のキャッシュ削除</button>
   &nbsp; &nbsp;
-  <button class="cacheclear" style="font-size:xx-small;">全キャッシュ削除</button>
+  <button class="allcacheclear" style="font-size:xx-small;">全キャッシュ削除</button>
   <br>
   <a href="https://github.com/miuramo/TCE_Navigator">TCE_Navigator (github)</a>
+  &nbsp; &nbsp;
 </body>
+
 </html>
