@@ -119,7 +119,7 @@ $(document).ready(function(){
 });
 
 function findBunrei(type, bunHash){
-    //    console.log("this is forum : " + type);
+    //    console.log("ここは、" + type+" のフォーラムです。");
 
     //文例HashからURLをとってくるには、コースIDが必要。
     //コースIDを現在開いているフォーラムページから得るため、H1要素のTCE-2X-XXXXを取得し、
@@ -152,8 +152,12 @@ function findBunrei(type, bunHash){
 // 文例をいれておくHash
 var CopyBunHash = {};
 
+// 二重に文例を読み込むのを防止する
+var bunrei_loaded = false;
 // 文例を読み込んでコピーボタンを作成する
 function loadBunrei(bunurl, type){
+	if (bunrei_loaded) return; // 二重に文例を読み込むのを防止する
+	bunrei_loaded = true;
     console.log("load bunrei "+bunurl);
 
     injectScript(chrome.runtime.getURL('war.js'), 'body');
