@@ -104,6 +104,8 @@ function updateList() {
 	var href = "";
 	$.each(courseHash, function (idx, val) {
 		if (idx.toUpperCase().match(regex) || kwd.length == 0) {
+			if (idx.match(/TCE-21.+$/) != null) return; // 昔のコースは表示しない
+			if (idx.match(/TCE-22.+$/) != null) return; // 昔のコースは表示しない
 			// この段階では、display:none にしておく
 			$('#clistul').append("<li><a href=\"" + val + "\">" + idx + "</a> " + getDiveHtml(idx.slice(-7)) + " " + getStarHtml(idx) + "<ul id=\"c" + idx + "\" style=\"display:none;\"></ul> </li>");
 			count++;
